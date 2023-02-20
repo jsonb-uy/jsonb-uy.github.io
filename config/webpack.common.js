@@ -2,6 +2,7 @@ const path = require('path');
 const TerserPlugin = require("terser-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const tailwindcss = require('tailwindcss');
 
 module.exports = {
   entry: {
@@ -9,14 +10,14 @@ module.exports = {
   },
   output: {
     filename: 'js/[name]-[contenthash].js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, '../dist'),
     clean: true
   },
   module: {
     rules: [
       {
         test: /\.css$/i,
-        include: path.resolve(__dirname, 'src/css'),
+        include: path.resolve(__dirname, '../src/css'),
         use: [
           MiniCssExtractPlugin.loader, 
           { 
@@ -25,12 +26,22 @@ module.exports = {
               sourceMap: false,
             }
           },
-          "postcss-loader"
-        ],
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [
+                  tailwindcss(path.resolve(__dirname, 'tailwind.config.js'))   ,
+                  'autoprefixer'   
+                ]
+              }
+            }
+          }
+        ]
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        include: path.resolve(__dirname, 'src/images'),
+        include: path.resolve(__dirname, '../src/images'),
         type: 'asset/resource',
         generator : {
           filename : 'images/[name]-[contenthash][ext]',
@@ -38,7 +49,7 @@ module.exports = {
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        include: path.resolve(__dirname, 'src/fonts'),
+        include: path.resolve(__dirname, '../src/fonts'),
         type: 'asset/resource',
         generator : {
           filename : 'fonts/[name]-[contenthash][ext]',
@@ -46,7 +57,7 @@ module.exports = {
       },
       {
         test: /\.html$/i,
-        include: path.resolve(__dirname, 'src'),
+        include: path.resolve(__dirname, '../src'),
         use: 'html-loader' // resolve image references/dependencies in HTML
       }
     ],
@@ -81,6 +92,6 @@ module.exports = {
         }
       },
       extractComments: false
-    })],
-  },
+    })]
+  }
 };

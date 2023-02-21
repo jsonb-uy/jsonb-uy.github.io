@@ -38,12 +38,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    # Specify runner + deployment step
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
         with:
-          name: webpack-build-pages
-          path: 'dist/'
+          artifact_name: webpack-built-pages
